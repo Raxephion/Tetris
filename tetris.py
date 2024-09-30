@@ -1,4 +1,19 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Sep 16 11:59:46 2024
 
+@author: raxephion
+
+Simple Tetris game in Python (Work-In-Progress)
+
+
+Requirements:
+
+bash
+pip install pygame
+pip install random
+
+"""
 
 
 
