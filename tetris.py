@@ -2,7 +2,7 @@
 """
 Created on Mon Sep 16 11:59:46 2024
 
-@author: raxep
+@author: raxephion
 
 Simple TETRIS game in Python (Work-In_Progress)
 
