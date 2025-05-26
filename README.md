@@ -14,7 +14,7 @@ A simple, work-in-progress implementation of the classic Tetris game, built usin
 
 ## Screenshot
 
-*(It would be great to add a screenshot of the game in action here!)*
+*(Coming soon....!)*
 ![Tetris Gameplay](placeholder_screenshot.png)
 *(Replace `placeholder_screenshot.png` with an actual image file in your repository)*
 
