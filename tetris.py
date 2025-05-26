@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Sep 16 11:59:46 2024 (Updated by AI)
+Created on Mon Sep 16 11:59:46 2024 
 
-@author: raxephion (Original), AI for modifications
+@author: raxephion (Original)
 
 Simple TETRIS game in Python (Work-In_Progress with improvements)
 
