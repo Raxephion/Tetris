@@ -1,194 +1,95 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Sep 16 11:59:46 2024
+# Pygame Tetris
 
-@author: raxephion
+A simple, work-in-progress implementation of the classic Tetris game, built using Python and the Pygame library. This project was created by **raxephion** as a fun exercise and is currently under development.
 
-Simple TETRIS game in Python (Work-In_Progress)
+## Features
 
-Requirements:
+*   Classic Tetris gameplay: falling tetrominoes that can be moved and rotated.
+*   Line clearing: complete horizontal lines to score points and make space.
+*   Increasing difficulty: (Currently, the speed is constant, but pressing 'down' accelerates the current piece).
+*   Basic scoring: gain 1 point for each line cleared.
+*   Game Over detection: when blocks pile up to the top.
+*   Random piece generation.
+*   Piece rotation.
 
-bash
-pip install pygame
-pip install random
+## Screenshot
 
+*(It would be great to add a screenshot of the game in action here!)*
+![Tetris Gameplay](placeholder_screenshot.png)
+*(Replace `placeholder_screenshot.png` with an actual image file in your repository)*
 
-"""
+## Requirements
 
+*   Python 3.x
+*   Pygame library
 
+The `random` module is part of the Python standard library, so no separate installation is needed for it.
 
-import pygame
-import random
+## Installation
 
-# Initialize Pygame
-pygame.init()
+1.  **Clone the repository (or download the script):**
+    If you're using Git:
+    ```bash
+    git clone <your-repository-url>
+    cd <your-repository-name>
+    ```
+    Otherwise, just download the Python script (`.py` file).
 
-# Screen dimensions
-screen_width = 300
-screen_height = 600
-block_size = 30
+2.  **Ensure Python 3 is installed.**
+    You can download it from [python.org](https://www.python.org/downloads/).
 
-# Define colors (RGB values)
-colors = [
-    (0, 0, 0),          # Black - Background color
-    (255, 0, 0),        # Red
-    (0, 255, 0),        # Green
-    (0, 0, 255),        # Blue
-    (255, 255, 0),      # Yellow
-    (255, 0, 255),      # Magenta
-    (0, 255, 255),      # Cyan
-    (255, 165, 0)       # Orange
-]
+3.  **Install Pygame:**
+    Open your terminal or command prompt and run:
+    ```bash
+    pip install pygame
+    ```
 
-# Define shapes (Tetris pieces)
-shapes = [
-    [[1, 1, 1, 1]],  # I shape
-    [[1, 1], [1, 1]],  # O shape
-    [[1, 1, 0], [0, 1, 1]],  # S shape
-    [[0, 1, 1], [1, 1, 0]],  # Z shape
-    [[1, 1, 1], [0, 1, 0]],  # T shape
-    [[1, 1, 1], [1, 0, 0]],  # L shape
-    [[1, 1, 1], [0, 0, 1]]   # J shape
-]
+## How to Play
 
-class Tetris:
-    def __init__(self, screen):
-        self.screen = screen
-        # Create a grid of empty cells
-        self.grid = [[0 for _ in range(screen_width // block_size)] for _ in range(screen_height // block_size)]
-        self.shapes = shapes
-        self.colors = colors
-        self.current_shape = self.get_new_shape()
-        self.shape_index = self.shapes.index(self.current_shape)  # Track the shape index
-        # Initial position of the current shape
-        self.shape_position = [0, screen_width // block_size // 2 - len(self.current_shape[0]) // 2]
-        self.score = 0
-        self.game_over = False
-        self.last_move_down = pygame.time.get_ticks()
+1.  Navigate to the directory where you saved the `tetris_game.py` file (or the cloned repository).
+2.  Run the game using Python:
+    ```bash
+    python tetris_game.py
+    ```
+    *(Assuming your Python file is named `tetris_game.py`. If not, replace it with the actual filename.)*
 
-    # Randomly select a new shape
-    def get_new_shape(self):
-        shape = random.choice(self.shapes)
-        self.shape_index = self.shapes.index(shape)  # Update index when getting a new shape
-        return shape
+## Controls
 
-    # Draw the grid
-    def draw_grid(self):
-        for row in range(len(self.grid)):
-            for col in range(len(self.grid[row])):
-                pygame.draw.rect(self.screen, self.colors[self.grid[row][col]],
-                                 (col * block_size, row * block_size, block_size, block_size), 0)
+*   **Left Arrow Key:** Move the current piece left.
+*   **Right Arrow Key:** Move the current piece right.
+*   **Down Arrow Key:** Move the current piece down faster (soft drop).
+*   **Up Arrow Key:** Rotate the current piece clockwise.
 
-    # Draw the current shape on the screen
-    def draw_shape(self, shape, offset, color_index):
-        off_y, off_x = offset
-        for y, row in enumerate(shape):
-            for x, cell in enumerate(row):
-                if cell:
-                    pygame.draw.rect(self.screen, self.colors[color_index],
-                                     ((off_x + x) * block_size, (off_y + y) * block_size, block_size, block_size), 0)
+## Game Logic Overview
 
-    # Rotate the shape 90 degrees clockwise
-    def rotate_shape(self, shape):
-        return [[shape[y][x] for y in range(len(shape))] for x in range(len(shape[0]) - 1, -1, -1)]
+*   The game board is a grid.
+*   Tetrominoes (shapes) fall from the top of the screen.
+*   Players can move pieces left, right, accelerate their fall, or rotate them.
+*   When a piece can no longer move down, it locks into place.
+*   If a horizontal line is completely filled with blocks, it is cleared, and the blocks above it move down.
+*   The game ends when a newly spawned piece cannot fit on the board (i.e., it collides immediately).
 
-    # Check for collisions
-    def check_collision(self, shape, offset):
-        off_y, off_x = offset
-        for y, row in enumerate(shape):
-            for x, cell in enumerate(row):
-                if cell:
-                    # Check if the shape is out of bounds or colliding with another shape
-                    if y + off_y >= len(self.grid) or x + off_x >= len(self.grid[0]) or x + off_x < 0 or self.grid[y + off_y][x + off_x]:
-                        return True
-        return False
+## Future Enhancements (To-Do / Ideas)
 
-    # Remove completed lines and update the score
-    def remove_lines(self):
-        new_grid = [[0 for _ in range(screen_width // block_size)] for _ in range(screen_height // block_size)]
-        index = len(new_grid) - 1
-        for row in reversed(self.grid):
-            if 0 in row:
-                new_grid[index] = row
-                index -= 1
-            else:
-                self.score += 1
-        self.grid = new_grid
+Since this is a work-in-progress, here are some ideas for future development:
 
-    # Move the current shape
-    def move(self, direction):
-        new_pos = self.shape_position[:]
-        
-        if direction == "left":
-            new_pos = [self.shape_position[0], self.shape_position[1] - 1]
-        elif direction == "right":
-            new_pos = [self.shape_position[0], self.shape_position[1] + 1]
-        elif direction == "down":
-            new_pos = [self.shape_position[0] + 1, self.shape_position[1]]
-            self.last_move_down = pygame.time.get_ticks()  # Accelerate the block's fall when the down key is pressed
-        elif direction == "rotate":
-            rotated_shape = self.rotate_shape(self.current_shape)
-            if not self.check_collision(rotated_shape, self.shape_position):
-                self.current_shape = rotated_shape
-            return
+*   **Next Piece Preview:** Show the player which piece is coming next.
+*   **Hold Piece Functionality:** Allow the player to "hold" a piece and swap it out later.
+*   **Hard Drop:** Instantly drop the piece to the bottom (e.g., with Spacebar).
+*   **Wall Kicks/Rotation System:** Implement a more sophisticated rotation system (like SRS) to allow pieces to "kick" off walls or other blocks when rotated near them.
+*   **Ghost Piece:** Show a faint outline of where the current piece will land.
+*   **Levels & Increasing Speed:** Increase game speed as the player scores more points or clears more lines.
+*   **Improved UI:**
+    *   Display score, lines cleared, and current level more prominently.
+    *   A proper "Game Over" screen with options to restart.
+*   **Sound Effects & Music:** Add audio cues for piece movement, line clears, and game over.
+*   **High Score System:** Save and display high scores.
+*   **Pause Functionality.**
 
-        if not self.check_collision(self.current_shape, new_pos):
-            self.shape_position = new_pos
+## Author
 
-    # Update the game state
-    def update(self):
-        current_time = pygame.time.get_ticks()
-        # Move the shape down if enough time has passed
-        if current_time - self.last_move_down >= 500:
-            self.shape_position[0] += 1
-            if self.check_collision(self.current_shape, self.shape_position):
-                self.shape_position[0] -= 1
-                self.lock_shape()
-            self.last_move_down = current_time
+*   **raxephion**
 
-        self.draw_grid()
-        self.draw_shape(self.current_shape, self.shape_position, self.shape_index + 1)
+---
 
-    # Lock the shape in place when it cannot move further down
-    def lock_shape(self):
-        for y, row in enumerate(self.current_shape):
-            for x, cell in enumerate(row):
-                if cell:
-                    self.grid[y + self.shape_position[0]][x + self.shape_position[1]] = self.shape_index + 1
-        self.current_shape = self.get_new_shape()
-        self.shape_position = [0, screen_width // block_size // 2 - len(self.current_shape[0]) // 2]
-        if self.check_collision(self.current_shape, self.shape_position):
-            self.game_over = True
-        self.remove_lines()
-
-# Main game loop
-def main():
-    screen = pygame.display.set_mode((screen_width, screen_height))
-    clock = pygame.time.Clock()
-    tetris = Tetris(screen)
-
-    while not tetris.game_over:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                return
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    tetris.move("left")
-                elif event.key == pygame.K_RIGHT:
-                    tetris.move("right")
-                elif event.key == pygame.K_DOWN:
-                    tetris.move("down")
-                elif event.key == pygame.K_UP:
-                    tetris.move("rotate")
-
-        screen.fill((0, 0, 0))  # Clear the screen
-        tetris.update()  # Update the game state
-        pygame.display.update()  # Update the display
-        clock.tick(30)  # Limit the frame rate to 30 FPS
-
-    print("Game Over! Final Score:", tetris.score)
-    pygame.quit()
-
-if __name__ == "__main__":
-    main()
+Feel free to contribute, modify, or use this code as a learning resource!
